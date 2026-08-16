@@ -31,6 +31,4 @@ export class User {
   get passwordHash(): string { return this.props.passwordHash; }
   get fullName(): string { return this.props.fullName; }
   get createdAt(): Date { return this.props.createdAt; }
-
-  set id(value: string) { this.props.id = value; } //user.id = "Hola";
 }
