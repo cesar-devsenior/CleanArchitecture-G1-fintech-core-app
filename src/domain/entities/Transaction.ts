@@ -30,6 +30,14 @@ export abstract class Transaction {
   get status(): TransactionStatus { return this.props.status; }
   get description(): string { return this.props.description; }
   get createdAt(): Date { return this.props.createdAt; }
+
+  markAsCompleted(): void {
+    this.props.status = "COMPLETED";
+  }
+
+  markAsFailed(): void {
+    this.props.status = "FAILED";
+  }
 }
 
 export interface DepositProps extends TransactionProps {
@@ -98,4 +106,7 @@ export class Transfer extends Transaction {
     
     return new Transfer(props);
   }
+
+  get sourceAccount(): string { return this.sourceAccountId; }
+  get destinationAccount(): string { return this.destinationAccountId; }
 }

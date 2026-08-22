@@ -35,7 +35,7 @@ export class Account {
   public get status(): AccountStatus { return this.props.status; }
   public get createdAt(): Date { return this.props.createdAt; }
 
-  // comportamientos de dominio
+  // Comportamientos de dominio
   public deposit(amount: Decimal): void {
     if (amount.lte(0)) {
       throw new InvalidAmountError("El monto del depósito debe ser estrictamente mayor a cero.");
