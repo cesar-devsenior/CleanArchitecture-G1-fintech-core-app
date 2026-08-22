@@ -1,0 +1,6 @@
+allowBuilds:
+  '@prisma/engines': false
+  core-js: set this to true or false
+  es5-ext: set this to true or false
+  prisma: false
+  uglifyjs-webpack-plugin: set this to true or false
