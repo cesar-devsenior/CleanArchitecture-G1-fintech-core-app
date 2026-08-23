@@ -3,7 +3,7 @@ import { InvalidPropValueError } from "../exceptions/DomainError";
 
 export interface TransactionProps {
   id: string;
-  ammount: Decimal;
+  amount: Decimal;
   status: TransactionStatus;
   description: string;
   createdAt: Date;
@@ -18,15 +18,15 @@ export abstract class Transaction {
     this.props = props;
   }
 
-  public static validateAmmount(props: TransactionProps, errorMessage: string): void {
-    if (props.ammount.lte(0)) {
+  public static validateAmount(props: TransactionProps, errorMessage: string): void {
+    if (props.amount.lte(0)) {
       throw new InvalidPropValueError(errorMessage);
     }
   }
 
   // Getters
   get id(): string { return this.props.id; }
-  get ammount(): Decimal { return this.props.ammount; }
+  get amount(): Decimal { return this.props.amount; }
   get status(): TransactionStatus { return this.props.status; }
   get description(): string { return this.props.description; }
   get createdAt(): Date { return this.props.createdAt; }
@@ -53,7 +53,7 @@ export class Deposit extends Transaction {
   }
 
   public static create(props: DepositProps): Deposit {
-    Transaction.validateAmmount(props, "El monto del depósito debe ser mayor que cero.");
+    Transaction.validateAmount(props, "El monto del depósito debe ser mayor que cero.");
     return new Deposit(props);
   }
 
@@ -74,7 +74,7 @@ export class Withdrawal extends Transaction {
   }
 
   public static create(props: WithdrawalProps): Withdrawal {
-    Transaction.validateAmmount(props, "El monto del retiro debe ser mayor que cero.");
+    Transaction.validateAmount(props, "El monto del retiro debe ser mayor que cero.");
     return new Withdrawal(props);
   }
 
@@ -102,7 +102,7 @@ export class Transfer extends Transaction {
       throw new InvalidPropValueError("La cuenta de origen y destino no pueden ser la misma.");
     }
     
-    Transaction.validateAmmount(props, "El monto de la transferencia debe ser mayor que cero.");
+    Transaction.validateAmount(props, "El monto de la transferencia debe ser mayor que cero.");
     
     return new Transfer(props);
   }
