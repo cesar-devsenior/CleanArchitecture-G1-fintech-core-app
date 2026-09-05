@@ -2,6 +2,8 @@ import { PrismaClient } from '../../generated/prisma/client';
 import { AccountRepository } from '../../domain/repositories/Repositories';
 import { Account } from '../../domain/entities/Account';
 import { AccountMapper } from '../mappers/AccountMapper';
+import { Transaction, Transfer } from '../../domain/entities/Transaction';
+import { TransactionMapper } from '../mappers/TransactionMapper';
 
 export class PrismaAccountRepository implements AccountRepository {
   constructor(private readonly prisma: PrismaClient) { }
@@ -47,6 +49,39 @@ export class PrismaAccountRepository implements AccountRepository {
     });
 
     return prismaAccounts.map(AccountMapper.toDomain);
+  }
+
+  async executeTransaction(transaction: Transaction): Promise<Transaction> {
+    let result: Transaction;
+
+    if (transaction instanceof Transfer) {
+      result = await this.prisma.$transaction(async (tx) => {
+        // 1. Retirar de cuenta origen
+        await tx.account.update({
+          where: { id: transaction.sourceAccount },
+          data: { balance: { decrement: transaction.amount }}
+        });
+
+        // 2. Depositar a cuenta destino
+        await tx.account.update({
+          where: { id: transaction.destinationAccount },
+          data: { balance: { increment: transaction.amount }}
+        });
+
+        // 3. Guardar en la tabla de transacciones
+        const prismaTransaction = TransactionMapper.toPersistence(transaction);
+
+        const saved = await tx.transaction.create({
+          data: prismaTransaction
+        });
+
+        return TransactionMapper.toDomain(saved);
+      });
+    } else {
+      throw new Error("Transacción no válida");
+    }
+
+    return result;
   }
 
 }

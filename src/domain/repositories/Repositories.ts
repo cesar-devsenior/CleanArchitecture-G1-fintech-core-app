@@ -13,6 +13,7 @@ export interface AccountRepository {
   findByAccountNumber(accountNumber: string): Promise<Account | null>;
   findByUserId(userId: string): Promise<Account[]>;
   save(account: Account): Promise<Account>;
+  executeTransaction(transaction: Transaction): Promise<Transaction>;
 }
 
 export interface TransactionRepository {
