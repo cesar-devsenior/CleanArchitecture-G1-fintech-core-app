@@ -2,7 +2,8 @@ import { PrismaClient } from '../../generated/prisma/client';
 import { AccountRepository } from '../../domain/repositories/Repositories';
 import { Account } from '../../domain/entities/Account';
 import { AccountMapper } from '../mappers/AccountMapper';
-import { Transaction, Transfer } from '../../domain/entities/Transaction';
+import { Decimal } from 'decimal.js';
+import { Deposit, Transaction, Transfer, Withdrawal } from '../../domain/entities/Transaction';
 import { TransactionMapper } from '../mappers/TransactionMapper';
 
 export class PrismaAccountRepository implements AccountRepository {
@@ -52,36 +53,46 @@ export class PrismaAccountRepository implements AccountRepository {
   }
 
   async executeTransaction(transaction: Transaction): Promise<Transaction> {
-    let result: Transaction;
 
-    if (transaction instanceof Transfer) {
-      result = await this.prisma.$transaction(async (tx) => {
-        // 1. Retirar de cuenta origen
+    return await this.prisma.$transaction(async (tx) => {
+      // 1. Si existe cuenta de origen, debitar saldo (TRANSFER o WITHDRAWAL)
+      if ((transaction instanceof Transfer || transaction instanceof Withdrawal)
+          && transaction.sourceAccount) {
         await tx.account.update({
           where: { id: transaction.sourceAccount },
-          data: { balance: { decrement: transaction.amount }}
+          data: { balance: { decrement: transaction.amount.toNumber() } },
         });
+      }
 
-        // 2. Depositar a cuenta destino
+      // 2. Si existe cuenta de destino, acreditar saldo (TRANSFER o DEPOSIT)
+      if ((transaction instanceof Transfer || transaction instanceof Deposit)
+          && transaction.destinationAccount) {
         await tx.account.update({
           where: { id: transaction.destinationAccount },
-          data: { balance: { increment: transaction.amount }}
+          data: { balance: { increment: transaction.amount.toNumber() } },
         });
+      }
 
-        // 3. Guardar en la tabla de transacciones
-        const prismaTransaction = TransactionMapper.toPersistence(transaction);
-
-        const saved = await tx.transaction.create({
-          data: prismaTransaction
-        });
-
-        return TransactionMapper.toDomain(saved);
+      // 3. Persistir el registro de la transacción
+      const transactionRecord = await tx.transaction.create({
+        data: TransactionMapper.toPersistence(transaction),
       });
-    } else {
-      throw new Error("Transacción no válida");
-    }
 
-    return result;
+      return TransactionMapper.toDomain(transactionRecord);
+    });
   }
 
+  async freeze(account: Account): Promise<void> {
+    await this.prisma.account.update({
+      where: { id: account.id },
+      data: { status: 'FROZEN' },
+    });
+  }
+
+  async unfreeze(account: Account): Promise<void> {
+    await this.prisma.account.update({
+      where: { id: account.id },
+      data: { status: 'ACTIVE' },
+    });
+  }
 }

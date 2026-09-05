@@ -1,39 +1,39 @@
-import Decimal from "decimal.js";
-import { Account } from "../domain/entities/Account";
-import { InvalidAmountError } from "../domain/exceptions/FinancialError";
+import { Decimal } from "decimal.js";
 import { AccountRepository } from "../domain/repositories/Repositories";
-import { AccountStatus } from "../generated/prisma/enums";
+import { Account } from "../domain/entities/Account";
 import { CreateAccountInputDTO, AccountOutputDTO } from "./dto/AccountDTOs";
+import { InvalidAmountError } from "../domain/exceptions/FinancialError";
 
 export class CreateAccountUseCase {
   constructor(private readonly accountRepository: AccountRepository) { }
 
   async execute(input: CreateAccountInputDTO): Promise<AccountOutputDTO> {
-    const initialBalance = input.initialBalance?.toNumber() ?? 0;
+    const initialAmount = input.initialBalance?.toNumber() ?? 0;
 
-    if(initialBalance < 0) {
-      throw new InvalidAmountError("El monto de la operacion debe ser mayor a cero.");
+    if (initialAmount < 0) {
+      throw new InvalidAmountError("El monto de la operación debe ser un valor estricto mayor a cero.");
     }
 
-    const accountNumber = `ACC-${Math.floor(1000000000 + Math.random() * 9000000000)}`;
+    const accountNumber = `ACC-${Math.floor(100000000 + Math.random() * 900000000)}`;
 
-    const account = Account.create({
+    const newAccount = Account.create({
+      id: crypto.randomUUID(),
       accountNumber,
-      balance: new Decimal(initialBalance),
+      balance: new Decimal(initialAmount),
       userId: input.userId,
-      status: AccountStatus.ACTIVE,
+      status: "ACTIVE",
       createdAt: new Date()
     });
 
-    const saved = await this.accountRepository.save(account);
+    const savedAccount = await this.accountRepository.save(newAccount);
 
     return {
-      id: saved.id,
-      accountNumber: saved.accountNumber,
-      balance: saved.balance,
-      status: saved.status,
-      userId: saved.userId,
-      createdAt: saved.createdAt
+      id: savedAccount.id,
+      accountNumber: savedAccount.accountNumber,
+      balance: new Decimal(savedAccount.balance),
+      status: savedAccount.status,
+      userId: savedAccount.userId,
+      createdAt: savedAccount.createdAt,
     };
   }
 }

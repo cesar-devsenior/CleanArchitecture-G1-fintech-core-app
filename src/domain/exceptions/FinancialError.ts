@@ -20,6 +20,6 @@ export class InvalidAmountError extends DomainError {
 
 export class AccountNotFoundError extends DomainError {
   constructor(accountId: string) {
-    super(`La cuenta con ID ${accountId} no fue encontrada`);
+    super(`La cuenta con ID '${accountId}' no fue encontrada o no existe.`);
   }
 }

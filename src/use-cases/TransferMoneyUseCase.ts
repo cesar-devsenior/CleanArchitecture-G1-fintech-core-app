@@ -1,66 +1,72 @@
-import Decimal from "decimal.js";
-import { Transfer } from "../domain/entities/Transaction";
-import { InvalidPropValueError } from "../domain/exceptions/DomainError";
-import { AccountFrozenError, AccountNotFoundError, InsufficientBalanceError, InvalidAmountError } from "../domain/exceptions/FinancialError";
 import { AccountRepository } from "../domain/repositories/Repositories";
-import { TransferMoneyResponse, TransferMoneyResquest } from "./dto/TransferDTOs";
+import { InvalidPropValueError } from "../domain/exceptions/DomainError";
+import { AccountNotFoundError, AccountFrozenError, InsufficientBalanceError, InvalidAmountError } from "../domain/exceptions/FinancialError";
+import { TransferMoneyResquest, TransferMoneyResponse } from "./dto/TransferDTOs";
+import { Decimal } from "decimal.js";
+import { Transfer } from "../domain/entities/Transaction";
 
 export class TransferMoneyUseCase {
-
   constructor(private readonly accountRepository: AccountRepository) { }
 
   async execute(input: TransferMoneyResquest): Promise<TransferMoneyResponse> {
-    if (input.amount < 0) {
-      throw new InvalidAmountError("El monto de la operacion debe ser mayor a cero.");
+    const { sourceAccountId, destinationAccountId, amount } = input;
+
+    // 1. Validaciones básicas de entrada
+    if (amount <= 0) {
+      throw new InvalidAmountError("El monto de la transferencia debe ser estrictamente mayor a cero.");
     }
 
-    if (input.sourceAccountId === input.destinationAccountId) {
-      throw new InvalidPropValueError("La cuenta origen y destino no pueden ser iguales");
+    if (sourceAccountId === destinationAccountId) {
+      throw new InvalidPropValueError("La cuenta de origen y destino no pueden ser idénticas.");
     }
 
-    // Validaciones cuenta origen
-    const sourceAccount = await this.accountRepository.findById(input.sourceAccountId);
-    if(!sourceAccount){
-      throw new AccountNotFoundError(input.sourceAccountId);
+    const transferAmount = new Decimal(amount);
+
+    // 2. Obtener la cuenta de origen para verificar estado e invariantes
+    const sourceAccount = await this.accountRepository.findById(sourceAccountId);
+    if (!sourceAccount) {
+      throw new AccountNotFoundError(sourceAccountId);
     }
 
-    if(sourceAccount.status === "FROZEN") {
-      throw new AccountFrozenError(input.sourceAccountId);
+    // 3. Validar estado de la cuenta origen
+    if (sourceAccount.status === "FROZEN") {
+      throw new AccountFrozenError(sourceAccountId);
     }
 
-    if(sourceAccount.balance.lessThan(input.amount)) {
-      throw new InsufficientBalanceError("La cuenta origen no tiene saldo suficiente");
+    // 4. Validar invariante de saldo suficiente
+    if (sourceAccount.balance.lessThan(transferAmount)) {
+      throw new InsufficientBalanceError("La cuenta de origen no tiene saldo suficiente para realizar la transferencia.");
     }
 
-    // Validaciones cuenta destino
-    const destinationAccount = await this.accountRepository.findById(input.destinationAccountId);
-    if(!destinationAccount) {
-      throw new AccountNotFoundError(input.destinationAccountId);
+    // 5. Validar existencia de la cuenta destino
+    const destinationAccount = await this.accountRepository.findById(destinationAccountId);
+    if (!destinationAccount) {
+      throw new AccountNotFoundError(destinationAccountId);
     }
 
-    if(destinationAccount.status === "FROZEN") {
-      throw new AccountFrozenError(input.destinationAccountId);
-    }
-
-    // Enviar la modificación a la base de datos
-    const transaction = Transfer.create({
-      amount: new Decimal(input.amount),
-      status: "PENDING",
-      sourceAccountId: input.sourceAccountId,
-      destinationAccountId: input.destinationAccountId,
+    // 6. Realizar los eventos con los métodos de la entidad de dominio (si es necesario)
+    sourceAccount.withdraw(transferAmount);
+    destinationAccount.deposit(transferAmount);
+    
+    // 7. Instanciar la Entidad de Dominio Transaction
+    const transactionEntity = Transfer.create({
+      amount: transferAmount,
+      status: "COMPLETED",
+      sourceAccountId,
+      destinationAccountId,
       createdAt: new Date(),
-      description: `Transferencia de ${input.amount} desde la cuenta ${input.sourceAccountId} a la cuenta ${input.destinationAccountId}`
+      description: `Transferencia de ${transferAmount.toNumber()} desde la cuenta ${sourceAccountId} a la cuenta ${destinationAccountId}.`
     });
 
-    const saved = await this.accountRepository.executeTransaction(transaction);
+    // 8. Delegar la ejecución al repositorio pasando la entidad de dominio
+    const savedTransaction = await this.accountRepository.executeTransaction(transactionEntity);
 
     return {
-      transactionId: saved.id,
-      sourceAccountId: input.sourceAccountId,
-      destinationAccountId: input.destinationAccountId,
-      amount: saved.amount.toNumber(),
-      executedAt: saved.createdAt
+      transactionId: savedTransaction.id!,
+      sourceAccountId,
+      destinationAccountId,
+      amount: savedTransaction.amount.toNumber(),
+      executedAt: savedTransaction.createdAt
     };
-
   }
 }
