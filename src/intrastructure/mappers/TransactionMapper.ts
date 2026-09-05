@@ -6,7 +6,7 @@ export class TransactionMapper {
   public static toDomain(prismaTransaction: PrismaTransaction): Transaction {
     const props = {
       id: prismaTransaction.id,
-      ammount: prismaTransaction.amount,
+      amount: prismaTransaction.amount,
       description: prismaTransaction.description ?? '',
       createdAt: prismaTransaction.createdAt,
       status: prismaTransaction.status
@@ -62,7 +62,7 @@ export class TransactionMapper {
 
     return {
       id: transaction.id,
-      amount: transaction.ammount,
+      amount: transaction.amount,
       description: transaction.description,
       type,
       status: transaction.status,
