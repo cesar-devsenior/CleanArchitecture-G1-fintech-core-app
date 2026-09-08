@@ -51,7 +51,7 @@ export class TransferMoneyUseCase {
     // 7. Instanciar la Entidad de Dominio Transaction
     const transactionEntity = Transfer.create({
       amount: transferAmount,
-      status: "COMPLETED",
+      status: "PENDING",
       sourceAccountId,
       destinationAccountId,
       createdAt: new Date(),

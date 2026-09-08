@@ -20,7 +20,7 @@ describe("CreateAccountUseCase", () => {
   it("debería crear una cuenta exitosamente con un balance inicial", async () => {
     const input = {
       userId: "user-123",
-      initialBalance: 100,
+      initialBalance: new Decimal(100),
     };
 
     const expectedAccount = Account.create({
@@ -38,7 +38,7 @@ describe("CreateAccountUseCase", () => {
 
     expect(mockAccountRepository.save).toHaveBeenCalledOnce();
     expect(result.userId).toBe(input.userId);
-    expect(result.balance.toNumber()).toBe(input.initialBalance);
+    expect(result.balance.toNumber()).toBe(input.initialBalance.toNumber());
     expect(result.status).toBe("ACTIVE");
   });
 
@@ -68,7 +68,7 @@ describe("CreateAccountUseCase", () => {
   it("debería lanzar un InvalidAmountError si el balance inicial es negativo", async () => {
     const input = {
       userId: "user-789",
-      initialBalance: -50,
+      initialBalance: new Decimal(-50),
     };
 
     await expect(useCase.execute(input)).rejects.toThrow(InvalidAmountError);

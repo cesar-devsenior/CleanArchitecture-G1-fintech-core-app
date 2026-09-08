@@ -74,6 +74,8 @@ export class PrismaAccountRepository implements AccountRepository {
       }
 
       // 3. Persistir el registro de la transacción
+      transaction.markAsCompleted();
+      
       const transactionRecord = await tx.transaction.create({
         data: TransactionMapper.toPersistence(transaction),
       });

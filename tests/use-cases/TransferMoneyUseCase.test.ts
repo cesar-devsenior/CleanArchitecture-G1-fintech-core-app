@@ -71,7 +71,7 @@ describe("TransferMoneyUseCase", () => {
         amount: new Decimal(200),
         sourceAccount: "acc-1",
         destinationAccount: "acc-2",
-        status: "COMPLETED",
+        status: "PENDING",
       })
     );
   });
