@@ -6,7 +6,9 @@ import {
   InsufficientBalanceError,
   AccountFrozenError,
   InvalidAmountError,
+  AccountNotFoundError,
 } from "../../src/domain/exceptions/FinancialError";
+import { InvalidPropValueError } from "../../src/domain/exceptions/DomainError";
 import { Decimal } from "decimal.js";
 import { Transfer } from "../../src/domain/entities/Transaction";
 
@@ -82,6 +84,47 @@ describe("TransferMoneyUseCase", () => {
     ).rejects.toThrow(InvalidAmountError);
 
     expect(mockAccountRepository.findById).not.toHaveBeenCalled();
+  });
+
+  it("debería lanzar InvalidPropValueError si la cuenta origen y destino son iguales", async () => {
+    await expect(
+      useCase.execute({ sourceAccountId: "acc-1", destinationAccountId: "acc-1", amount: 100 })
+    ).rejects.toThrow(InvalidPropValueError);
+
+    expect(mockAccountRepository.findById).not.toHaveBeenCalled();
+    expect(mockAccountRepository.executeTransaction).not.toHaveBeenCalled();
+  });
+
+  it("debería lanzar AccountNotFoundError si la cuenta de origen no existe", async () => {
+    vi.mocked(mockAccountRepository.findById).mockResolvedValue(null);
+
+    await expect(
+      useCase.execute({ sourceAccountId: "missing-source", destinationAccountId: "acc-2", amount: 100 })
+    ).rejects.toThrow(AccountNotFoundError);
+
+    expect(mockAccountRepository.executeTransaction).not.toHaveBeenCalled();
+  });
+
+  it("debería lanzar AccountNotFoundError si la cuenta de destino no existe", async () => {
+    const sourceAcc = Account.create({
+      id: "acc-1",
+      accountNumber: "ACC-100",
+      balance: new Decimal(500),
+      userId: "user-1",
+      status: "ACTIVE",
+      createdAt: new Date()
+    });
+
+    vi.mocked(mockAccountRepository.findById).mockImplementation(async (id) => {
+      if (id === "acc-1") return sourceAcc;
+      return null;
+    });
+
+    await expect(
+      useCase.execute({ sourceAccountId: "acc-1", destinationAccountId: "missing-destination", amount: 100 })
+    ).rejects.toThrow(AccountNotFoundError);
+
+    expect(mockAccountRepository.executeTransaction).not.toHaveBeenCalled();
   });
 
   it("debería lanzar InsufficientBalanceError si la cuenta de origen no tiene saldo suficiente", async () => {

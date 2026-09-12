@@ -17,3 +17,7 @@ export interface CreateAccountInputDTO {
   userId: string;
   initialBalance?: Decimal;
 }
+
+export interface GetUserAccountsInputDTO {
+  userId: string;
+}

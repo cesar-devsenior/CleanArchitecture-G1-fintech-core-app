@@ -11,7 +11,10 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
       include: ['src/use-cases/**/*.ts', 'src/domain/**/*.ts'],
-      exclude: ['src/**/*.d.ts'],
+      exclude: [
+        'src/**/*.d.ts',
+        'src/**/dto/*.ts',
+        'src/**/dtos/*.ts'],
     },
   },
   resolve: {

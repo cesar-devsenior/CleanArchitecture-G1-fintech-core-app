@@ -1,7 +1,7 @@
 import { InvalidPropValueError } from "../exceptions/DomainError";
 
 export interface UserProps {
-  id: string;
+  id?: string;
   email: string;
   passwordHash: string;
   fullName: string;
@@ -26,7 +26,7 @@ export class User {
   }
 
   // Getters
-  get id(): string { return this.props.id; } //user.id
+  get id(): string | undefined { return this.props.id; } //user.id
   get email(): string { return this.props.email; }
   get passwordHash(): string { return this.props.passwordHash; }
   get fullName(): string { return this.props.fullName; }

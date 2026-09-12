@@ -1,0 +1,52 @@
+@baseUrl = http://localhost:3000
+
+###
+### 1) Iniciar sesión y reutilizar el token en las siguientes peticiones
+# @name login
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+    "email": "cdiaz@email.com",
+    "password": "cdiaz123"
+}
+
+###
+### 2) Transferir dinero entre cuentas
+POST {{baseUrl}}/api/transactions/transfer
+Authorization: Bearer {{login.response.body.$.data.token}}
+Content-Type: application/json
+
+{
+  "sourceAccountId": "<cuenta-origen-id>",
+  "destinationAccountId": "<cuenta-destino-id>",
+  "amount": 150,
+  "description": "Transferencia de prueba"
+}
+
+###
+### 3) Depositar dinero en una cuenta
+POST {{baseUrl}}/api/transactions/deposit
+Authorization: Bearer {{login.response.body.$.data.token}}
+Content-Type: application/json
+
+{
+  "accountId": "<account-id>",
+  "amount": 250
+}
+
+###
+### 4) Retirar dinero de una cuenta
+POST {{baseUrl}}/api/transactions/withdrawal
+Authorization: Bearer {{login.response.body.$.data.token}}
+Content-Type: application/json
+
+{
+  "accountId": "<account-id>",
+  "amount": 100
+}
+
+###
+### 5) Consultar el historial de transacciones de una cuenta
+GET {{baseUrl}}/api/transactions/history/<account-id>
+Authorization: Bearer {{login.response.body.$.data.token}}

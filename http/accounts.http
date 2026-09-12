@@ -1,0 +1,42 @@
+@baseUrl = http://localhost:3000
+
+###
+### 1) Iniciar sesión y reutilizar el token en las siguientes peticiones
+# @name login
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+    "email": "cdiaz@email.com",
+    "password": "cdiaz123"
+}
+
+###
+### 2) Obtener todas las cuentas del usuario autenticado
+GET {{baseUrl}}/api/accounts
+Authorization: Bearer {{login.response.body.$.data.token}}
+
+###
+### 3) Crear una nueva cuenta para el usuario autenticado
+POST {{baseUrl}}/api/accounts
+Authorization: Bearer {{login.response.body.$.data.token}}
+Content-Type: application/json
+
+{
+  "initialBalance": 1000
+}
+
+###
+### 4) Consultar el saldo de una cuenta específica
+GET {{baseUrl}}/api/accounts/<account-id>/balance
+Authorization: Bearer {{login.response.body.$.data.token}}
+
+###
+### 5) Congelar una cuenta
+PATCH {{baseUrl}}/api/accounts/<account-id>/freeze
+Authorization: Bearer {{login.response.body.$.data.token}}
+
+###
+### 6) Descongelar una cuenta
+PATCH {{baseUrl}}/api/accounts/<account-id>/unfreeze
+Authorization: Bearer {{login.response.body.$.data.token}}
