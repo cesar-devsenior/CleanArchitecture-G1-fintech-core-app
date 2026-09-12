@@ -36,27 +36,30 @@ import { errorHandler } from './middlewares/ErrorHandler';
 import { RegisterUserSchema, LoginSchema } from './dtos/AuthDTOs';
 import { TransferMoneySchema, DepositMoneySchema, WithdrawalMoneySchema } from './dtos/TransactionDTOs';
 
-export function createApp(): Application {
+export const createApp = (): Application => {
   const app = express();
 
   // Middlewares globales de Express
   app.use(cors());
   app.use(express.json());
 
-  // 1. Instanciación de Infraestructura y Clientes de Persistencia
+  // 1. Instanciación de Base de datos (Capa de Infraestructura)
   const prisma = new PrismaClient({
     adapter: new PrismaPg({
       connectionString: process.env.DATABASE_URL,
     }),
   });
+
+  // 2. Instanciación de Servicios (Capa de Infraestructura)
   const passwordHasher = new BcryptPasswordHasher(10);
   const tokenService = new JwtTokenService();
 
+  // 3. Instanciación de Repositorios (Capa de Infraestructura)
   const userRepository = new PrismaUserRepository(prisma);
   const accountRepository = new PrismaAccountRepository(prisma);
   const transactionRepository = new PrismaTransactionRepository(prisma);
 
-  // 2. Instanciación de Casos de Uso (Capa de Aplicación)
+  // 4. Instanciación de Casos de Uso (Capa de Aplicación)
   const registerUserUseCase = new RegisterUserUseCase(userRepository, passwordHasher);
   const loginUseCase = new LoginUseCase(userRepository, tokenService, passwordHasher);
   const createAccountUseCase = new CreateAccountUseCase(accountRepository);
@@ -69,11 +72,11 @@ export function createApp(): Application {
   const withdrawalUseCase = new WithdrawalUseCase(accountRepository);
   const getTransactionHistoryUseCase = new GetTransactionHistoryUseCase(transactionRepository);
 
-  // 3. Instanciación de Controladores y Guardias HTTP (Capa de Presentación)
+  // 5. Instanciación de Controladores y Guardias HTTP (Capa de Presentación)
   const authController = new AuthController(registerUserUseCase, loginUseCase);
   const accountController = new AccountController(
-    getUserAccountsUseCase,
     createAccountUseCase,
+    getUserAccountsUseCase,
     getBalanceUseCase,
     freezeAccountUseCase,
     unfreezeAccountUseCase
@@ -86,7 +89,7 @@ export function createApp(): Application {
   );
   const authMiddleware = new AuthMiddleware(tokenService);
 
-  // 4. Definición y Enrutamiento de la API REST
+  // 6. Definición y Enrutamiento de la API REST
   // --- Rutas Públicas (Autenticación) ---
   app.post('/api/auth/register', validateRequest(RegisterUserSchema), authController.register);
   app.post('/api/auth/login', validateRequest(LoginSchema), authController.login);
@@ -104,7 +107,7 @@ export function createApp(): Application {
   app.post('/api/transactions/withdrawal', authMiddleware.handle, validateRequest(WithdrawalMoneySchema), transactionController.withdrawal);
   app.get('/api/transactions/history/:accountId', authMiddleware.handle, transactionController.getHistory);
 
-  // 5. Middleware Global de Manejo de Errores (Obligatoriamente al final)
+  // 7. Middleware Global de Manejo de Errores (Obligatoriamente al final)
   app.use(errorHandler);
 
   return app;

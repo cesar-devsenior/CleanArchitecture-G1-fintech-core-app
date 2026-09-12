@@ -1,4 +1,4 @@
-import jwt, { SignOptions } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import { TokenService, TokenPayload } from '../../domain/services/TokenService';
 
 export class JwtTokenService implements TokenService {
@@ -6,13 +6,13 @@ export class JwtTokenService implements TokenService {
   private readonly expiresIn: string;
 
   constructor() {
-    this.secretKey = process.env.JWT_SECRET || 'super_secret_fintech_key_change_in_production';
-    this.expiresIn = process.env.JWT_EXPIRES_IN || '8h';
+    this.secretKey = process.env.JWT_SECRET || 'default_secret';
+    this.expiresIn = process.env.JWT_EXPIRES_IN || '1h';
   }
 
   generateToken(payload: TokenPayload): string {
-    const options: SignOptions = {
-      expiresIn: this.expiresIn as SignOptions['expiresIn'],
+    const options: jwt.SignOptions = {
+      expiresIn: this.expiresIn as jwt.SignOptions['expiresIn'],
       algorithm: 'HS256'
     };
 

@@ -8,27 +8,12 @@ import { UnfreezeAccountUseCase } from '../../use-cases/UnfreezeAccountUseCase';
 
 export class AccountController {
   constructor(
-    private readonly getUserAccountsUseCase: GetUserAccountsUseCase,
     private readonly createAccountUseCase: CreateAccountUseCase,
+    private readonly getUserAccountsUseCase: GetUserAccountsUseCase,
     private readonly getBalanceUseCase: GetBalanceUseCase,
     private readonly freezeAccountUseCase: FreezeAccountUseCase,
     private readonly unfreezeAccountUseCase: UnfreezeAccountUseCase
   ) {}
-
-  getUserAccounts = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      // Extrae el ID del usuario directamente desde la sesión autenticada en el token
-      const userId = req.user!.userId;
-      const accounts = await this.getUserAccountsUseCase.execute({ userId });
-
-      res.status(200).json({
-        status: 'success',
-        data: accounts,
-      });
-    } catch (error) {
-      next(error);
-    }
-  };
 
   createAccount = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -38,6 +23,21 @@ export class AccountController {
       res.status(201).json({
         status: 'success',
         data: newAccount,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+getUserAccounts = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      // Extrae el ID del usuario directamente desde la sesión autenticada en el token
+      const userId = req.user!.userId;
+      const accounts = await this.getUserAccountsUseCase.execute({ userId });
+
+      res.status(200).json({
+        status: 'success',
+        data: accounts,
       });
     } catch (error) {
       next(error);

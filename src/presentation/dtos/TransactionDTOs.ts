@@ -5,11 +5,9 @@ import { z } from 'zod';
  */
 export const TransferMoneySchema = z.object({
   sourceAccountId: z
-    .string({ error: 'La cuenta de origen es requerida' })
-    .uuid('ID de cuenta de origen debe ser un UUID válido'),
+    .uuid({ error: 'ID de cuenta de origen debe ser un UUID válido' }),
   destinationAccountId: z
-    .string({ error: 'La cuenta de destino es requerida' })
-    .uuid('ID de cuenta de destino debe ser un UUID válido'),
+    .uuid({ error: 'ID de cuenta de destino debe ser un UUID válido' }),
   amount: z
     .number({ error: 'El monto es requerido' })
     .positive('El monto a transferir debe ser un número estrictamente mayor a cero'),
@@ -21,8 +19,7 @@ export const TransferMoneySchema = z.object({
 
 export const DepositMoneySchema = z.object({
   accountId: z
-    .string({ error: 'La cuenta es requerida' })
-    .uuid('ID de cuenta debe ser un UUID válido'),
+    .uuid({ error: 'ID de cuenta debe ser un UUID válido' }),
   amount: z
     .number({ error: 'El monto es requerido' })
     .positive('El monto a depositar debe ser un número estrictamente mayor a cero'),
@@ -30,8 +27,7 @@ export const DepositMoneySchema = z.object({
 
 export const WithdrawalMoneySchema = z.object({
   accountId: z
-    .string({ error: 'La cuenta es requerida' })
-    .uuid('ID de cuenta debe ser un UUID válido'),
+    .uuid({ error: 'ID de cuenta debe ser un UUID válido'}),
   amount: z
     .number({ error: 'El monto es requerido' })
     .positive('El monto a retirar debe ser un número estrictamente mayor a cero'),

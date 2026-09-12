@@ -1,6 +1,6 @@
 import { TransactionRepository } from "../domain/repositories/Repositories";
 import { GetTransactionHistoryInputDTO, GetTransactionHistoryOutputDTO } from "./dto/TransactionHistoryDTOs";
-import { Transaction, Deposit, Withdrawal, Transfer } from "../domain/entities/Transaction";
+import { Deposit, Withdrawal, Transaction, Transfer } from "../domain/entities/Transaction";
 
 export class GetTransactionHistoryUseCase {
   constructor(private readonly transactionRepository: TransactionRepository) { }
@@ -10,12 +10,20 @@ export class GetTransactionHistoryUseCase {
 
     return {
       accountId: input.accountId,
-      transactions: transactions.map((transaction) => {
+      transactions: transactions.map((transaction: Transaction) => {
         const type = transaction instanceof Deposit
           ? 'DEPOSIT'
           : transaction instanceof Withdrawal
             ? 'WITHDRAWAL'
             : 'TRANSFER';
+            
+        const sourceAccountId=transaction instanceof Withdrawal || transaction instanceof Transfer
+            ? transaction.sourceAccount
+            : undefined;
+
+        const destinationAccountId=transaction instanceof Deposit || transaction instanceof Transfer
+            ? transaction.destinationAccount
+            : undefined;
 
         return {
           id: transaction.id,
@@ -24,12 +32,8 @@ export class GetTransactionHistoryUseCase {
           status: transaction.status,
           description: transaction.description,
           createdAt: transaction.createdAt,
-          sourceAccountId: transaction instanceof Withdrawal || transaction instanceof Transfer
-            ? transaction.sourceAccount
-            : undefined,
-          destinationAccountId: transaction instanceof Deposit || transaction instanceof Transfer
-            ? transaction.destinationAccount
-            : undefined,
+          sourceAccountId,
+          destinationAccountId
         };
       }),
     };
