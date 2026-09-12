@@ -134,4 +134,104 @@ describe("TransactionController", () => {
     });
     expect(next).not.toHaveBeenCalled();
   });
+
+  it("debería normalizar accountId cuando llega como arreglo en getHistory", async () => {
+    const req = {
+      params: { accountId: ["acc-1"] },
+    } as any;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn().mockReturnThis(),
+    } as any;
+    const next = vi.fn();
+    const history = { accountId: "acc-1", transactions: [] };
+
+    vi.mocked(getTransactionHistoryUseCase.execute as any).mockResolvedValue(history);
+
+    await controller.getHistory(req, res, next);
+
+    expect(getTransactionHistoryUseCase.execute).toHaveBeenCalledWith({ accountId: "acc-1" });
+  });
+
+  it("debería pasar el error al siguiente middleware en transfer", async () => {
+    const req = {
+      body: {
+        sourceAccountId: "acc-1",
+        destinationAccountId: "acc-2",
+        amount: 100,
+      },
+    } as any;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn().mockReturnThis(),
+    } as any;
+    const next = vi.fn();
+    const error = new Error("boom");
+
+    vi.mocked(transferMoneyUseCase.execute as any).mockRejectedValue(error);
+
+    await controller.transfer(req, res, next);
+
+    expect(next).toHaveBeenCalledWith(error);
+  });
+
+  it("debería pasar el error al siguiente middleware en deposit", async () => {
+    const req = {
+      body: {
+        accountId: "acc-1",
+        amount: 100,
+      },
+    } as any;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn().mockReturnThis(),
+    } as any;
+    const next = vi.fn();
+    const error = new Error("boom");
+
+    vi.mocked(depositUseCase.execute as any).mockRejectedValue(error);
+
+    await controller.deposit(req, res, next);
+
+    expect(next).toHaveBeenCalledWith(error);
+  });
+
+  it("debería pasar el error al siguiente middleware en withdrawal", async () => {
+    const req = {
+      body: {
+        accountId: "acc-1",
+        amount: 100,
+      },
+    } as any;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn().mockReturnThis(),
+    } as any;
+    const next = vi.fn();
+    const error = new Error("boom");
+
+    vi.mocked(withdrawalUseCase.execute as any).mockRejectedValue(error);
+
+    await controller.withdrawal(req, res, next);
+
+    expect(next).toHaveBeenCalledWith(error);
+  });
+
+  it("debería pasar el error al siguiente middleware en getHistory", async () => {
+    const req = {
+      params: { accountId: "acc-1" },
+    } as any;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn().mockReturnThis(),
+    } as any;
+    const next = vi.fn();
+    const error = new Error("boom");
+
+    vi.mocked(getTransactionHistoryUseCase.execute as any).mockRejectedValue(error);
+
+    await controller.getHistory(req, res, next);
+
+    expect(next).toHaveBeenCalledWith(error);
+  });
 });

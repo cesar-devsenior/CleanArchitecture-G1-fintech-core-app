@@ -93,4 +93,51 @@ describe("AuthController", () => {
     });
     expect(next).not.toHaveBeenCalled();
   });
+
+  it("debería pasar el error al siguiente middleware en register", async () => {
+    const req = {
+      body: {
+        name: "Ana Pérez",
+        email: "ana@email.com",
+        password: "secret123",
+      },
+    } as any;
+
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn().mockReturnThis(),
+    } as any;
+
+    const next = vi.fn();
+    const error = new Error("boom");
+
+    vi.mocked(registerUserUseCase.execute as any).mockRejectedValue(error);
+
+    await controller.register(req, res, next);
+
+    expect(next).toHaveBeenCalledWith(error);
+  });
+
+  it("debería pasar el error al siguiente middleware en login", async () => {
+    const req = {
+      body: {
+        email: "ana@email.com",
+        password: "secret123",
+      },
+    } as any;
+
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn().mockReturnThis(),
+    } as any;
+
+    const next = vi.fn();
+    const error = new Error("boom");
+
+    vi.mocked(loginUseCase.execute as any).mockRejectedValue(error);
+
+    await controller.login(req, res, next);
+
+    expect(next).toHaveBeenCalledWith(error);
+  });
 });

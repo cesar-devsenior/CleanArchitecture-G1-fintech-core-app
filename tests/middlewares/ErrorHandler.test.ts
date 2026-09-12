@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import { errorHandler } from "../../src/presentation/middlewares/ErrorHandler";
 import { InsufficientBalanceError, AccountNotFoundError } from "../../src/domain/exceptions/FinancialError";
 import { InvalidCredentialsError, UserAlreadyExistsError } from "../../src/domain/exceptions/UserError";
-import { DomainError } from "../../src/domain/exceptions/DomainError";
+import { DomainError, InvalidPropValueError } from "../../src/domain/exceptions/DomainError";
 import { Prisma } from "../../src/generated/prisma/client";
 
 describe("ErrorHandler", () => {
@@ -76,7 +76,7 @@ describe("ErrorHandler", () => {
       json: vi.fn().mockReturnThis(),
     } as any;
 
-    errorHandler(new DomainError("Error de dominio"), {} as any, res, vi.fn());
+    errorHandler(new InvalidPropValueError("Error de dominio"), {} as any, res, vi.fn());
 
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({

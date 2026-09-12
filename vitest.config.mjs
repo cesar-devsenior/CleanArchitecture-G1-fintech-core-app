@@ -10,11 +10,15 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
-      include: ['src/use-cases/**/*.ts', 'src/domain/**/*.ts'],
+      include: ['src/**/*.ts'],
       exclude: [
         'src/**/*.d.ts',
         'src/**/dto/*.ts',
-        'src/**/dtos/*.ts'],
+        'src/**/dtos/*.ts',
+        'src/generated/**',
+        'src/server.ts',
+        'src/presentation/app.ts',
+      ],
     },
   },
   resolve: {

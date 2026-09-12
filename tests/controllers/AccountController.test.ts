@@ -143,4 +143,154 @@ describe("AccountController", () => {
     });
     expect(next).not.toHaveBeenCalled();
   });
+
+  it("debería normalizar accountId cuando llega como arreglo en getBalance", async () => {
+    const req = {
+      params: { accountId: ["acc-1"] },
+    } as any;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn().mockReturnThis(),
+    } as any;
+    const next = vi.fn();
+    const balance = { id: "acc-1", balance: 500 };
+
+    vi.mocked(getBalanceUseCase.execute as any).mockResolvedValue(balance);
+
+    await controller.getBalance(req, res, next);
+
+    expect(getBalanceUseCase.execute).toHaveBeenCalledWith({ accountId: "acc-1" });
+  });
+
+  it("debería normalizar accountId cuando llega como arreglo en freezeAccount", async () => {
+    const req = {
+      params: { accountId: ["acc-1"] },
+    } as any;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn().mockReturnThis(),
+    } as any;
+    const next = vi.fn();
+
+    await controller.freezeAccount(req, res, next);
+
+    expect(freezeAccountUseCase.execute).toHaveBeenCalledWith("acc-1");
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({
+      status: "success",
+      message: "Cuenta congelada correctamente",
+    });
+    expect(next).not.toHaveBeenCalled();
+  });
+
+  it("debería normalizar accountId cuando llega como arreglo en unfreezeAccount", async () => {
+    const req = {
+      params: { accountId: ["acc-1"] },
+    } as any;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn().mockReturnThis(),
+    } as any;
+    const next = vi.fn();
+
+    await controller.unfreezeAccount(req, res, next);
+
+    expect(unfreezeAccountUseCase.execute).toHaveBeenCalledWith("acc-1");
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({
+      status: "success",
+      message: "Cuenta descongelada correctamente",
+    });
+    expect(next).not.toHaveBeenCalled();
+  });
+
+  it("debería pasar el error al siguiente middleware en getUserAccounts", async () => {
+    const req = {
+      user: { userId: "user-1", email: "ana@email.com" },
+    } as any;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn().mockReturnThis(),
+    } as any;
+    const next = vi.fn();
+    const error = new Error("boom");
+
+    vi.mocked(getUserAccountsUseCase.execute as any).mockRejectedValue(error);
+
+    await controller.getUserAccounts(req, res, next);
+
+    expect(next).toHaveBeenCalledWith(error);
+  });
+
+  it("debería pasar el error al siguiente middleware en createAccount", async () => {
+    const req = {
+      user: { userId: "user-1", email: "ana@email.com" },
+    } as any;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn().mockReturnThis(),
+    } as any;
+    const next = vi.fn();
+    const error = new Error("boom");
+
+    vi.mocked(createAccountUseCase.execute as any).mockRejectedValue(error);
+
+    await controller.createAccount(req, res, next);
+
+    expect(next).toHaveBeenCalledWith(error);
+  });
+
+  it("debería pasar el error al siguiente middleware en getBalance", async () => {
+    const req = {
+      params: { accountId: "acc-1" },
+    } as any;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn().mockReturnThis(),
+    } as any;
+    const next = vi.fn();
+    const error = new Error("boom");
+
+    vi.mocked(getBalanceUseCase.execute as any).mockRejectedValue(error);
+
+    await controller.getBalance(req, res, next);
+
+    expect(next).toHaveBeenCalledWith(error);
+  });
+
+  it("debería pasar el error al siguiente middleware en freezeAccount", async () => {
+    const req = {
+      params: { accountId: "acc-1" },
+    } as any;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn().mockReturnThis(),
+    } as any;
+    const next = vi.fn();
+    const error = new Error("boom");
+
+    vi.mocked(freezeAccountUseCase.execute as any).mockRejectedValue(error);
+
+    await controller.freezeAccount(req, res, next);
+
+    expect(next).toHaveBeenCalledWith(error);
+  });
+
+  it("debería pasar el error al siguiente middleware en unfreezeAccount", async () => {
+    const req = {
+      params: { accountId: "acc-1" },
+    } as any;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn().mockReturnThis(),
+    } as any;
+    const next = vi.fn();
+    const error = new Error("boom");
+
+    vi.mocked(unfreezeAccountUseCase.execute as any).mockRejectedValue(error);
+
+    await controller.unfreezeAccount(req, res, next);
+
+    expect(next).toHaveBeenCalledWith(error);
+  });
 });
