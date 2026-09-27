@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "module": "nodenext",
+    "module": "commonjs",
     "target": "esnext",
     "types": ["node"],
 

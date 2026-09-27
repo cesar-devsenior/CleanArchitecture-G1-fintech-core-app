@@ -18,6 +18,7 @@ describe("WithdrawalUseCase", () => {
     mockAccountRepository = {
       findById: vi.fn(),
       save: vi.fn(),
+      executeTransaction: vi.fn(),
     } as unknown as AccountRepository;
 
     useCase = new WithdrawalUseCase(mockAccountRepository);
@@ -34,7 +35,15 @@ describe("WithdrawalUseCase", () => {
     });
 
     vi.mocked(mockAccountRepository.findById).mockResolvedValue(account);
-    vi.mocked(mockAccountRepository.save).mockResolvedValue(account);
+    const savedTransaction = {
+      id: "tx-withdrawal-1",
+      amount: new Decimal(50),
+      status: "COMPLETED",
+      description: "Retiro",
+      createdAt: new Date("2024-01-01T00:00:00.000Z"),
+      sourceAccount: "acc-1",
+    } as any;
+    vi.mocked(mockAccountRepository.executeTransaction).mockResolvedValue(savedTransaction);
 
     const result = await useCase.execute({
       accountId: "acc-1",
@@ -42,8 +51,7 @@ describe("WithdrawalUseCase", () => {
     });
 
     expect(mockAccountRepository.findById).toHaveBeenCalledWith("acc-1");
-    expect(account.balance.toNumber()).toBe(150);
-    expect(mockAccountRepository.save).toHaveBeenCalledWith(account);
+    expect(mockAccountRepository.executeTransaction).toHaveBeenCalledTimes(1);
     expect(result.newBalance).toBe(150);
   });
 
