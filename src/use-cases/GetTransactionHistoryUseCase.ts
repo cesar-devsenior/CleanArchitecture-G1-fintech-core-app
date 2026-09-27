@@ -26,7 +26,7 @@ export class GetTransactionHistoryUseCase {
             : undefined;
 
         return {
-          id: transaction.id,
+          id: transaction.id!,
           type,
           amount: transaction.amount.toNumber(),
           status: transaction.status,
