@@ -25,10 +25,18 @@ export class GetTransactionHistoryUseCase {
             ? transaction.destinationAccount
             : undefined;
 
+        const amount = transaction instanceof Deposit
+          ? transaction.amount.toNumber()
+          : transaction instanceof Withdrawal
+            ? -transaction.amount.toNumber()
+            : transaction instanceof Transfer && transaction.sourceAccount === input.accountId
+              ? -transaction.amount.toNumber()
+              : transaction.amount.toNumber();
+
         return {
           id: transaction.id!,
           type,
-          amount: transaction.amount.toNumber(),
+          amount,
           status: transaction.status,
           description: transaction.description,
           createdAt: transaction.createdAt,
