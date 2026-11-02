@@ -25,7 +25,7 @@ Aceptación: README y checklist de entrega dejan claro qué evidencia local est�
 
 ## Tasks
 
-- T1 — S1 — inline — parcial — optimizar y verificar Dockerfiles/Compose sin introducir secretos.
+- T1 — S1 — inline — parcial — optimizar y verificar Dockerfiles/Compose sin introducir secretos — commit `af6b0a0`.
 - T2 — S2 — manual — pendiente — desplegar PostgreSQL, backend y frontend en Render.
 - T3 — S3 — inline/manual — pendiente — completar README, URLs públicas y video.
 
@@ -41,3 +41,6 @@ La copia local de `fintech-core-app` contiene los artefactos requeridos y Docker
 Se mejoró la caché de dependencias de ambos Dockerfiles, se habilitaron builds nativos requeridos por Prisma/bcrypt/esbuild, se añadió healthcheck al frontend y se agregó el checklist académico al README. `docker compose config --quiet` y `git diff --check` pasan. La reconstrucción de imágenes quedó pendiente porque Docker no pudo descargar `node:24-alpine` y `nginx:alpine` por timeout del registro.
 
 Risk: item 5 (Docker build configuration and runtime image behavior).
+
+### L4 — Verificación y commit
+`git diff --check`, `docker compose config` y las comprobaciones estructurales de artefactos pasan. `docker compose build backend frontend` no pudo completar por timeout descargando imágenes base desde el registro; no se observó un error del candidato. Commit local: `af6b0a0`.
