@@ -65,45 +65,55 @@ export const RegisterPage: React.FC = () => {
   };
 
   return (
-    <div className="page-card">
-      <h2>Registro de Usuario</h2>
-      {successMessage && <div className="alert alert-success">{successMessage}</div>}
-      <ErrorAlert error={generalError} />
-      <form onSubmit={handleSubmit} noValidate>
-        <Input
-          label="Nombre Completo"
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          error={fieldErrors['name']}
-          disabled={isSubmitting}
-          required
-        />
-        <Input
-          label="Correo Electrónico"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          error={fieldErrors['email']}
-          disabled={isSubmitting}
-          required
-        />
-        <Input
-          label="Contraseña"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          error={fieldErrors['password']}
-          disabled={isSubmitting}
-          required
-        />
-        <Button type="submit" isLoading={isSubmitting} disabled={isSubmitting}>
-          Registrarse
-        </Button>
-      </form>
-      <p style={{ marginTop: '1rem' }}>
-        ¿Ya tienes cuenta? <Link to="/login">Inicia sesión aquí</Link>
-      </p>
+    <div className="auth-page">
+      <div className="auth-brand" aria-hidden="true">
+        <span className="brand-mark">FC</span>
+        <span>Fintech Core</span>
+      </div>
+      <div className="page-card auth-card">
+        <div className="auth-heading">
+          <span className="eyebrow">Empieza hoy</span>
+          <h2>Crea tu cuenta</h2>
+          <p>Una forma más clara de cuidar y mover tu dinero.</p>
+        </div>
+        {successMessage && <div className="alert alert-success">{successMessage}</div>}
+        <ErrorAlert error={generalError} />
+        <form onSubmit={handleSubmit} noValidate>
+          <Input
+            label="Nombre Completo"
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            error={fieldErrors['name']}
+            disabled={isSubmitting}
+            required
+          />
+          <Input
+            label="Correo Electrónico"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            error={fieldErrors['email']}
+            disabled={isSubmitting}
+            required
+          />
+          <Input
+            label="Contraseña"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            error={fieldErrors['password']}
+            disabled={isSubmitting}
+            required
+          />
+          <Button type="submit" isLoading={isSubmitting} disabled={isSubmitting} className="btn-block">
+            Registrarse
+          </Button>
+        </form>
+        <p className="auth-footer">
+          ¿Ya tienes cuenta? <Link to="/login">Inicia sesión aquí</Link>
+        </p>
+      </div>
     </div>
   );
 };

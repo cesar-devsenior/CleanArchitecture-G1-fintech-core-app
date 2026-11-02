@@ -9,7 +9,10 @@ export const MainLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
     <div className="layout">
       <header className="navbar">
         <div className="nav-brand">
-          <Link to="/">FINTECH CORE</Link>
+          <Link to="/" className="brand-link">
+            <span className="brand-mark">FC</span>
+            <span>FINTECH CORE</span>
+          </Link>
         </div>
         <nav className="nav-links">
           {isAuthenticated ? (

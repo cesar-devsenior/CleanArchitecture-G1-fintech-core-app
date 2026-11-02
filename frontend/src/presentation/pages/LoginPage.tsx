@@ -59,35 +59,45 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="page-card">
-      <h2>Iniciar Sesión</h2>
-      <ErrorAlert error={generalError} />
-      <form onSubmit={handleSubmit} noValidate>
-        <Input
-          label="Correo Electrónico"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          error={fieldErrors['email']}
-          disabled={isSubmitting}
-          required
-        />
-        <Input
-          label="Contraseña"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          error={fieldErrors['password']}
-          disabled={isSubmitting}
-          required
-        />
-        <Button type="submit" isLoading={isSubmitting} disabled={isSubmitting}>
-          Ingresar
-        </Button>
-      </form>
-      <p style={{ marginTop: '1rem' }}>
-        ¿No tienes cuenta? <Link to="/register">Regístrate aquí</Link>
-      </p>
+    <div className="auth-page">
+      <div className="auth-brand" aria-hidden="true">
+        <span className="brand-mark">FC</span>
+        <span>Fintech Core</span>
+      </div>
+      <div className="page-card auth-card">
+        <div className="auth-heading">
+          <span className="eyebrow">Tu banca, simplificada</span>
+          <h2>Bienvenido de nuevo</h2>
+          <p>Accede a tus cuentas y gestiona tus finanzas con confianza.</p>
+        </div>
+        <ErrorAlert error={generalError} />
+        <form onSubmit={handleSubmit} noValidate>
+          <Input
+            label="Correo Electrónico"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            error={fieldErrors['email']}
+            disabled={isSubmitting}
+            required
+          />
+          <Input
+            label="Contraseña"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            error={fieldErrors['password']}
+            disabled={isSubmitting}
+            required
+          />
+          <Button type="submit" isLoading={isSubmitting} disabled={isSubmitting} className="btn-block">
+            Ingresar
+          </Button>
+        </form>
+        <p className="auth-footer">
+          ¿No tienes cuenta? <Link to="/register">Regístrate aquí</Link>
+        </p>
+      </div>
     </div>
   );
 };

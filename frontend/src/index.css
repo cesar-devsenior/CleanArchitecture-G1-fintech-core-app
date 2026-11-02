@@ -1,17 +1,19 @@
 :root {
-  --primary: #2563eb;
-  --primary-hover: #1d4ed8;
-  --secondary: #64748b;
-  --secondary-hover: #475569;
-  --danger: #ef4444;
-  --danger-hover: #dc2626;
+  --primary: #6d28d9;
+  --primary-hover: #5b21b6;
+  --primary-soft: #f4efff;
+  --secondary: #52525b;
+  --secondary-hover: #3f3f46;
+  --danger: #dc2626;
+  --danger-hover: #b91c1c;
   --success: #16a34a;
-  --bg-main: #f8fafc;
+  --bg-main: #fafafa;
   --bg-card: #ffffff;
-  --text-main: #0f172a;
-  --text-muted: #64748b;
-  --border-color: #e2e8f0;
-  --radius: 8px;
+  --text-main: #18181b;
+  --text-muted: #71717a;
+  --border-color: #e4e4e7;
+  --radius: 14px;
+  --shadow-card: 0 16px 50px rgba(39, 18, 82, 0.08);
 }
 
 * {
@@ -21,8 +23,8 @@
 }
 
 body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  background-color: var(--bg-main);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: radial-gradient(circle at top left, #f6f3fd 0, var(--bg-main) 34rem);
   color: var(--text-main);
   line-height: 1.5;
 }
@@ -33,7 +35,7 @@ a {
 }
 
 a:hover {
-  text-decoration: underline;
+  color: var(--primary-hover);
 }
 
 .layout {
@@ -46,15 +48,35 @@ a:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem;
-  background-color: var(--bg-card);
+  padding: 1.1rem clamp(1rem, 4vw, 3rem);
+  background-color: rgba(255, 255, 255, 0.86);
   border-bottom: 1px solid var(--border-color);
+  backdrop-filter: blur(16px);
 }
 
-.nav-brand a {
+.brand-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
   font-weight: 700;
-  font-size: 1.25rem;
+  font-size: 1.05rem;
   color: var(--text-main);
+}
+
+.brand-link:hover { text-decoration: none; }
+
+.brand-mark {
+  display: inline-grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border-radius: 9px;
+  background: linear-gradient(135deg, #7c3aed, #4f46e5);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  box-shadow: 0 7px 16px rgba(109, 40, 217, 0.25);
 }
 
 .nav-links {
@@ -72,7 +94,7 @@ a:hover {
   background: none;
   border: 1px solid var(--border-color);
   padding: 0.4rem 0.8rem;
-  border-radius: var(--radius);
+  border-radius: 10px;
   cursor: pointer;
   font-size: 0.875rem;
 }
@@ -82,18 +104,18 @@ a:hover {
 }
 
 .container {
-  max-width: 900px;
+  max-width: 1120px;
   width: 100%;
-  margin: 2rem auto;
+  margin: 2.5rem auto;
   padding: 0 1rem;
 }
 
 .page-card {
   background: var(--bg-card);
-  padding: 2rem;
+  padding: clamp(1.5rem, 4vw, 2.5rem);
   border-radius: var(--radius);
   border: 1px solid var(--border-color);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-card);
 }
 
 .page-card h2 {
@@ -113,15 +135,16 @@ a:hover {
 }
 
 .input-control {
-  padding: 0.6rem 0.8rem;
+  padding: 0.78rem 0.9rem;
   border: 1px solid var(--border-color);
-  border-radius: var(--radius);
+  border-radius: 10px;
   font-size: 1rem;
 }
 
 .input-control:focus {
-  outline: 2px solid var(--primary);
-  outline-offset: -1px;
+  outline: 3px solid rgba(109, 40, 217, 0.15);
+  border-color: var(--primary);
+  outline-offset: 0;
 }
 
 .input-error {
@@ -138,7 +161,7 @@ a:hover {
   display: inline-block;
   padding: 0.65rem 1.25rem;
   border: none;
-  border-radius: var(--radius);
+  border-radius: 10px;
   font-weight: 500;
   cursor: pointer;
   font-size: 1rem;
@@ -151,13 +174,45 @@ a:hover {
 }
 
 .btn-primary {
-  background-color: var(--primary);
+  background: linear-gradient(135deg, #7c3aed, #5b21b6);
   color: #fff;
 }
 
 .btn-primary:hover:not(:disabled) {
-  background-color: var(--primary-hover);
+  background: linear-gradient(135deg, #6d28d9, #4c1d95);
 }
+
+.btn-block { width: 100%; }
+
+.auth-page {
+  width: min(100%, 28rem);
+  margin: clamp(1rem, 8vh, 5rem) auto;
+}
+
+.auth-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  margin-bottom: 1.5rem;
+  color: #3f3f46;
+  font-size: 1.1rem;
+  font-weight: 750;
+}
+
+.auth-card { padding: clamp(1.5rem, 5vw, 2.75rem); }
+
+.auth-heading { margin-bottom: 1.75rem; text-align: center; }
+
+.auth-heading h2 { margin: 0.4rem 0 0.55rem; font-size: clamp(1.65rem, 4vw, 2rem); letter-spacing: -0.04em; }
+
+.auth-heading p { color: var(--text-muted); font-size: 0.93rem; }
+
+.eyebrow { color: var(--primary); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; }
+
+.auth-footer { margin-top: 1.5rem; color: var(--text-muted); font-size: 0.9rem; text-align: center; }
+
+.auth-footer a { font-weight: 700; }
 
 .btn-secondary {
   background-color: var(--secondary);
@@ -496,4 +551,39 @@ a:hover {
   display: flex;
   justify-content: flex-end;
   gap: 0.75rem;
+}
+
+@media (max-width: 640px) {
+  .navbar {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .nav-links {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .container {
+    margin-top: 1.25rem;
+  }
+
+  .dashboard-header,
+  .account-summary-card,
+  .quick-actions-bar {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .header-actions,
+  .action-buttons {
+    flex-wrap: wrap;
+  }
+
+  .header-actions .btn,
+  .action-buttons .btn {
+    flex: 1 1 10rem;
+  }
 }
