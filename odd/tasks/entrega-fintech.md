@@ -55,4 +55,4 @@ Risk: item 5 (Docker build configuration and runtime image behavior).
 El usuario pidió una interfaz "similar" a `https://academy.devseniorcode.com/login`. La referencia observada usa una composición clara, minimalista, centrada y con acento morado; se conservará la funcionalidad fintech y se aplicará esa dirección visual al frontend.
 
 ### L6 — Rediseño aplicado
-Se actualizó el shell, autenticación, navegación, tokens visuales, tarjetas, botones, inputs y responsive móvil. La suite del frontend queda en 46 archivos y 96 tests aprobados; también pasan typecheck, lint y build. Risk: none (cambio visual sin alterar contratos ni flujos de negocio).
+Se actualizó el shell, autenticación, navegación, tokens visuales, tarjetas, botones, inputs, dashboard y responsive móvil. La suite del frontend queda en 46 archivos y 96 tests aprobados; también pasan typecheck, lint y build. Risk: none (cambio visual sin alterar contratos ni flujos de negocio).
