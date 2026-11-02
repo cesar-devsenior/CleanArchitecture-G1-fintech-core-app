@@ -86,3 +86,27 @@ Antes de publicar:
 - PostgreSQL con volumen persistente.
 - Healthchecks en Compose.
 - Nginx configurado para React Router.
+
+## Checklist de entrega académica
+
+### Repositorio
+
+- [ ] Publicar este repositorio con acceso al instructor.
+- [ ] Confirmar que `backend/Dockerfile`, `frontend/Dockerfile`, `frontend/nginx.conf` y `docker-compose.yml` estén visibles en GitHub.
+- [ ] Confirmar que no se publique ningún archivo `.env` ni secreto.
+
+### Producción
+
+- [ ] Crear PostgreSQL administrado en el proveedor cloud.
+- [ ] Configurar `DATABASE_URL`, `JWT_SECRET`, `JWT_EXPIRES_IN`, `PORT` y `CLIENT_ORIGIN` en el backend.
+- [ ] Confirmar en los logs del backend que `prisma migrate deploy` no deja migraciones pendientes.
+- [ ] Publicar el backend y verificar `/health`.
+- [ ] Construir el frontend con `VITE_API_URL` apuntando a la URL pública del backend.
+- [ ] Probar registro, inicio de sesión y transacciones desde la URL pública del frontend.
+
+### Evidencia para la plataforma académica
+
+- [ ] Enlace al repositorio de GitHub.
+- [ ] URL pública del frontend.
+- [ ] URL pública del backend o endpoint `/health`.
+- [ ] Video de 5 minutos con registro, login y transacciones financieras.

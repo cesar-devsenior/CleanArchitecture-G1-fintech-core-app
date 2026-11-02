@@ -1,0 +1,43 @@
+# Entrega final Fintech Core
+Branch: `prep/entrega-fintech` | Strategy: `single-pr` | Runner: Docker Compose, pnpm, Vitest
+Objective: preparar el repositorio principal y la evidencia necesaria para la entrega académica.
+
+## Specs
+
+### S1 — Estructura de contenerización
+Texto autorizado del usuario: "`backend/Dockerfile` multi-etapa optimizado con `pnpm` y comando `prisma migrate deploy`."
+Texto autorizado del usuario: "`frontend/Dockerfile` multi-etapa optimizado con Nginx y soporte para React Router (`nginx.conf`)."
+Texto autorizado del usuario: "`docker-compose.yml` orquestando PostgreSQL 18, Backend y Frontend con healthchecks y volumen persistente."
+Aceptación: los tres artefactos existen en el repositorio principal, no contienen secretos y pueden validarse con Docker Compose.
+
+### S2 — Despliegue funcional en la nube
+Texto autorizado del usuario: "Base de datos relacional operativa con las migraciones aplicadas."
+Texto autorizado del usuario: "API Backend conectada a la base de datos de producción."
+Texto autorizado del usuario: "Frontend en producción consumiendo los endpoints de la API."
+Aceptación: registrar las URLs públicas y comprobar health, autenticación y transacciones en producción. Esta parte requiere acciones manuales en Render.
+
+### S3 — Evidencia de entrega
+Texto autorizado del usuario: "Enlace al/los repositorio(s) de GitHub (público o con acceso al instructor)."
+Texto autorizado del usuario: "Enlace a la Aplicación Frontend en Producción (URL pública para pruebas funcionales)."
+Texto autorizado del usuario: "Enlace al Backend (Endpoint público base o Health Check)."
+Texto autorizado del usuario: "Un video de 5 minutos mostrando la aplicación en funcionamiento, incluyendo la creación de un usuario, inicio de sesión y las distintas transacciones financieras."
+Aceptación: README y checklist de entrega dejan claro qué evidencia local está validada y qué enlaces/video deben completar el estudiante.
+
+## Tasks
+
+- T1 — S1 — inline — parcial — optimizar y verificar Dockerfiles/Compose sin introducir secretos.
+- T2 — S2 — manual — pendiente — desplegar PostgreSQL, backend y frontend en Render.
+- T3 — S3 — inline/manual — pendiente — completar README, URLs públicas y video.
+
+## Log
+
+### L1 — Solicitud original
+"PERFECTO PRIMERO PREPARAREMOS TODO PARA SUBIRLO EN LA ENTREGA DEL PROYECTO"
+
+### L2 — Evidencia inicial
+La copia local de `fintech-core-app` contiene los artefactos requeridos y Docker Compose está funcionando. El repositorio separado `fintech-infra` no se usará como fuente principal porque sus rutas no coinciden con la estructura actual.
+
+### L3 — Preparación aplicada
+Se mejoró la caché de dependencias de ambos Dockerfiles, se habilitaron builds nativos requeridos por Prisma/bcrypt/esbuild, se añadió healthcheck al frontend y se agregó el checklist académico al README. `docker compose config --quiet` y `git diff --check` pasan. La reconstrucción de imágenes quedó pendiente porque Docker no pudo descargar `node:24-alpine` y `nginx:alpine` por timeout del registro.
+
+Risk: item 5 (Docker build configuration and runtime image behavior).

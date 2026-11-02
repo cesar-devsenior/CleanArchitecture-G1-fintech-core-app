@@ -8,9 +8,11 @@ RUN npm i -g pnpm@12.6.0
 
 WORKDIR /app
 
-COPY . . 
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
 RUN pnpm install --frozen-lockfile
+
+COPY . .
 
 ARG VITE_API_URL
 ENV VITE_API_URL=${VITE_API_URL}
@@ -26,11 +28,10 @@ FROM nginx:alpine
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Copiar el cliente de Prisma generado y el build
-COPY --from=builder /app/dist  /usr/share/nginx/html
+# Copiar el build estático
+COPY --from=builder /app/dist /usr/share/nginx/html
 
 EXPOSE 80
 
-# SCRIPT DE ARRANQUE RESILIENTE:
-# 1. Nginx sirve los archivos estáticos compilados
+# Nginx sirve los archivos estáticos compilados.
 CMD ["nginx", "-g", "daemon off;"]
