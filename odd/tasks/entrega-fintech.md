@@ -43,4 +43,4 @@ Se mejoró la caché de dependencias de ambos Dockerfiles, se habilitaron builds
 Risk: item 5 (Docker build configuration and runtime image behavior).
 
 ### L4 — Verificación y commit
-`git diff --check`, `docker compose config` y las comprobaciones estructurales de artefactos pasan. `docker compose build backend frontend` no pudo completar por timeout descargando imágenes base desde el registro; no se observó un error del candidato. Commit local: `af6b0a0`.
+`git diff --check`, `docker compose config` y las comprobaciones estructurales de artefactos pasan. Backend: `pnpm test --run` (25 archivos, 115 tests) y `pnpm build` pasan. Frontend: `pnpm test --run` (46 archivos, 96 tests), `pnpm typecheck`, `pnpm lint` y `pnpm build` pasan. Los endpoints locales frontend y `/health` responden HTTP 200. `docker compose build backend frontend` no pudo completar por timeout descargando imágenes base desde el registro; no se observó un error del candidato. Commits locales: `af6b0a0` y `f1321aa`.
