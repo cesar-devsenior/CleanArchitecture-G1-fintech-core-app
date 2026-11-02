@@ -1,0 +1,22 @@
+{
+  "mcpServers": {
+    "rest-client": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "${userHome}/.cursor/extensions/johncole.restclient-mcp-1.7.0/dist/mcp-server.mjs"
+      ],
+      "cwd": "${workspaceFolder}"
+    }
+  },
+  "servers": {
+    "rest-client": {
+      "type": "stdio",
+      "command": "/Applications/Cursor.app/Contents/Frameworks/Cursor Helper (Plugin).app/Contents/MacOS/Cursor Helper (Plugin)",
+      "args": [
+        "/Users/kevin/.cursor/extensions/johncole.restclient-mcp-1.7.0/dist/mcp-server.mjs"
+      ],
+      "cwd": "/Users/kevin/.cursor/extensions/johncole.restclient-mcp-1.7.0"
+    }
+  }
+}

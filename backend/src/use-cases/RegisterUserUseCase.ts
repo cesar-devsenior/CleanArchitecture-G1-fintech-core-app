@@ -1,0 +1,36 @@
+import { User } from "../domain/entities/User";
+import { UserAlreadyExistsError } from "../domain/exceptions/UserError";
+import { UserRepository } from "../domain/repositories/Repositories";
+import { PasswordHasher } from "../domain/services/PasswordHasher";
+import { RegisterUserInputDTO, RegisterUserOutputDTO } from "./dto/AuthDTOs";
+
+export class RegisterUserUseCase {
+  constructor(
+    private readonly userRepository: UserRepository,
+    private readonly passwordHasher: PasswordHasher
+  ) { }
+
+  async execute(input: RegisterUserInputDTO): Promise<RegisterUserOutputDTO> {
+    const existingUser = await this.userRepository.findByEmail(input.email);
+
+    if (existingUser) {
+      throw new UserAlreadyExistsError(input.email);
+    }
+
+    const passwordHash = await this.passwordHasher.hash(input.password);
+
+    const user = await this.userRepository.save(User.create({
+      fullName: input.name,
+      email: input.email,
+      passwordHash: passwordHash,
+      createdAt: new Date()
+    }));
+
+    return {
+      id: user.id!,
+      name: user.fullName,
+      email: user.email,
+      createdAt: user.createdAt,
+    };
+  }
+}
